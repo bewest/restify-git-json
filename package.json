@@ -7,5 +7,10 @@
     "test": "make test"
   },
   "author": "Ben West",
-  "license": "BSD-2-Clause"
+  "license": "BSD-2-Clause",
+  "dependencies": {
+    "js-git": "~0.6.1",
+    "restify": "~2.6.0",
+    "bunyan": "~0.22.1"
+  }
 }
