@@ -58,7 +58,6 @@ if (!module.parent) {
   var server = createServer(env);
   server.listen(port, function( ) {
     console.log('listening on', server.name, server.url);
-
   });
   server.on('after', restify.auditLogger({
     body: true,

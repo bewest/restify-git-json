@@ -61,9 +61,7 @@ $ curl -vs -XPOST -H "content-type: multipart/form-data" -F file=@lib/stream-git
 So each request like this creates a new set of blobs on a new uniquely
 identified branch.
 
-
-
-Work in progress.
+**Work in progress.**
 
 ## Install
 ```bash
@@ -81,8 +79,8 @@ $ npm install
 
 Many to most things, sorry.
 #### high level
-* make selection of git db backend selectable
 * get json api working
+  * compat with github
 * test with memdb
   * develop module for memcache/redis
   * develop module for s3 (knox, request, use proxy to s3)
@@ -95,7 +93,6 @@ Many to most things, sorry.
 * develop remotes/push module
 
 #### low level
-* move git db selection to config/support
 * make options for lots of things so that user can tweak stream
   behavior
   * committer, refs, etc
