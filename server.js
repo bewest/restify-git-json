@@ -32,7 +32,7 @@ var log = bunyan.createLogger({
         serializers: restify.bunyan.serializers
 });
 
-function createServer(base) {
+function createServer(opts) {
   var server = restify.createServer( );
 
   // server.pre(restify.pre.pause( ));
@@ -44,16 +44,18 @@ function createServer(base) {
   server.use(restify.queryParser( ));
   server.use(restify.gzipResponse( ));
 
-  install(server, restify);
+  opts.bodyParser = restify.bodyParser;
+  install(server, opts);
 
   return server;
 }
 module.exports = createServer;
 
 if (!module.parent) {
-  var port = process.env.PORT || 6776;
-  var base = process.env.BASE || './out';
-  var server = createServer(base);
+  var env = require('./env');
+  var port = env.PORT || 6776;
+
+  var server = createServer(env);
   server.listen(port, function( ) {
     console.log('listening on', server.name, server.url);
 
