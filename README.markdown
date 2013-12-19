@@ -10,9 +10,49 @@ interfaces.  Uses git streams to provide a
 to inspect, create, and manipulate git repos.
 
 Includes an endpoint to upload files, streaming them into a uniquely
-identified git reference.
+identified git reference per user per namespace per upload.
 
-## Example
+## API
+
+### HTTP REST Endpoints
+Basic idea is to wrap a configurable git repo (backed by s3, memory,
+or bare fs) using js-git, providing a RESTful API identical to the
+[github json API](http://developer.github.com/v3/git/).
+
+Basic pattern is:
+```tsv
+METHOD	ENDPOINT	Description
+GET	/repos/:owner/:repo/git/:type
+GET	/repos/:owner/:repo/git/refs
+GET	/repos/:owner/:repo/git/refs/:ref
+GET	/repos/:owner/:repo/git/refs/:ref
+GET	/repos/:owner/:repo/git/commits/:sha
+GET	/repos/:owner/:repo/git/trees/:sha
+GET	/repos/:owner/:repo/git/blobs/:sha
+```
+
+
+#### `Uploads`
+As a bonus, we expose an additional endpoint
+```tsv
+METHOD	ENDPOINT	Description
+POST	/repos/:owner/:repo/upload
+```
+
+This pins uploads to a uniquely identified branch.  The result can
+then be cloned for replication.
+
+The semantics for working with this endpoint are the exact same as
+normal browser file uploads.  As a bonus feature, if a header with
+`content-md5` is sent, the
+[checksum of the file is validated](https://github.com/mcavage/node-restify/blob/cc86da05e28dffd9304460c3851f4ac0f0153439/lib/plugins/body_reader.js#L89-L118)
+before being saved.  For all cases, sha1 sums are provided for each
+upload.
+
+**Caveats** cloning is currently only possible when using fs bare
+option (default).
+
+##### Example
 EG
 ```bash
 $ curl -vs -XPOST -H "content-type: multipart/form-data" -F file=@lib/stream-git.js localhost:6776/repo/test | json
@@ -97,6 +137,8 @@ Many to most things, sorry.
   behavior
   * committer, refs, etc
 
+
+### Inspecting a configured running instance
 
 ```bash
 $ ( set -x; du -h -c out/test.git/ && git ls-remote out/test.git/ ) 2>&1 | tee -a README.markdown 
