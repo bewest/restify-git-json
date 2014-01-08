@@ -383,6 +383,13 @@ $ npm install
 * https://github.com/dominictarr/event-stream#eventstream
 
 ## TODO
+### MVP
+* need to create user/repo - will hit directory creation issue otherwise
+* fetch metadata about user
+* fetch metadata about repo
+* update repo metadata
+* update user metadata
+### the rest
 
 Many to most things, sorry.
 #### low level
@@ -392,6 +399,7 @@ Many to most things, sorry.
   * make commit
 
 #### high level
+
 * get POST json api endpoints working
   * doublecheck API compatibility with github
 
