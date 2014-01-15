@@ -27,14 +27,14 @@ $ node server.js
 #### Environment variables
 
   * **PORT** Expects to be assigned a tcp port to serve http requests on via
-    `**PORT**` environment variable.  Default is `6776`.
-  * `**BASE**` - the directory housing bare git repos if using 'fs-db' backend.
+    **`PORT`** environment variable.  Default is `6776`.
+  * **`BASE`** - the directory housing bare git repos if using 'fs-db' backend.
     Default value is `./out`.
-  * `**GIT_BACKEND**`  `fs-db` (default) or `memdb`.
+  * **`GIT_BACKEND`**  `fs-db` (default) or `memdb`.
 
 ##### Choosing a git backend
 
-###### Bare file database `**fs-db**`
+###### Bare file database **`fs-db`**
 
 Each git database is stored on disk using the "bare" repo layout (no working
 directory, no files are left "checked out").
