@@ -1,4 +1,3 @@
-
 # restify-git-json
 
 An API to git repos exposed as a RESTful interface.
@@ -26,11 +25,13 @@ $ node server.js
 
 #### Environment variables
 
-  * **PORT** Expects to be assigned a tcp port to serve http requests on via
-    **`PORT`** environment variable.  Default is `6776`.
-  * **`BASE`** - the directory housing bare git repos if using 'fs-db' backend.
-    Default value is `./out`.
-  * **`GIT_BACKEND`**  `fs-db` (default) or `memdb`.
+* **PORT** Expects to be assigned a tcp port to serve http requests 
+  on via **`PORT`** environment variable.  Default is `6776`.
+
+* **BASE** the directory housing bare git repos if using `fs-db` backend.
+  Default value is `./out`.
+* **GIT_BACKEND** `fs-db` (default) or `memdb`.
+
 
 ##### Choosing a git backend
 
@@ -43,7 +44,7 @@ more information.
 
 The current advice is to use this one if you aren't sure.
 
-###### Memory based database `**memdb**`
+###### Memory based database **`memdb`**
 
 The git database is stored in memory, which is cool, but you can only get the
 contents via the http endpoints supported by the server.  (Cloning is
