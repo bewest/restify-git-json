@@ -54,41 +54,40 @@ option (default).
 
 ##### Example
 EG
+
 ```bash
-+ curl -ivs -XPOST -H 'content-type: multipart/form-data' -F file=@../gist/sunder.gist/input.txt localhost:6776/repos/me/proof/upload
-+ json -H
++ curl -ivs -F web=@./History.md -F kkktwo=@env.js localhost:6776/repos/me/test/upload
++ json
 * About to connect() to localhost port 6776 (#0)
 *   Trying 127.0.0.1... connected
-> POST /repos/me/proof/upload HTTP/1.1
+> POST /repos/me/test/upload HTTP/1.1
 > User-Agent: curl/7.22.0 (x86_64-pc-linux-gnu) libcurl/7.22.0 OpenSSL/1.0.1 zlib/1.2.3.4 libidn/1.23 librtmp/2.3
 > Host: localhost:6776
 > Accept: */*
-> Content-Length: 773
+> Content-Length: 2911
 > Expect: 100-continue
-> content-type: multipart/form-data; boundary=----------------------------03e35a1f6c38
+> Content-Type: multipart/form-data; boundary=----------------------------124e1b80ed69
 > 
 < HTTP/1.1 100 Continue
 } [data not shown]
 < HTTP/1.1 201 Created
 < Connection: close
 < Content-Type: application/json
-< Content-Length: 669
-< Date: Wed, 25 Dec 2013 23:59:00 GMT
+< Content-Length: 866
+< Date: Wed, 15 Jan 2014 05:58:03 GMT
 < 
 { [data not shown]
 * Closing connection #0
-HTTP/1.1 100 Continue
-
 {
   "err": null,
   "body": [
     {
-      "ref": "upload/incoming/2013-12-25-57540359/36ca88",
-      "sha": "36ca88c51023c38b135b243fe054da98d3eb6ac5",
+      "ref": "upload/incoming/2014-01-15-79083446/489841",
+      "sha": "4898416679ef377c29690b3e4fe0ed2c7aa7ef23",
       "head": {
-        "commit": "36ca88c51023c38b135b243fe054da98d3eb6ac5",
+        "commit": "4898416679ef377c29690b3e4fe0ed2c7aa7ef23",
         "tree": {
-          "tree": "1daf69f11ee1f5ff253e1a3300839cf6c7be710f",
+          "tree": "f9526358da6b35eb90d365309dfea451f91e096c",
           "author": {
             "name": "MY AUTHOR",
             "email": "git@js"
@@ -98,18 +97,118 @@ HTTP/1.1 100 Continue
             "email": "git@js"
           },
           "message": "MY JUSTIFICATION",
-          "url": "http://localhost:6776/repos/me/proof/git/trees/1daf69f11ee1f5ff253e1a3300839cf6c7be710f"
+          "url": "http://localhost:6776/repos/me/test/git/trees/f9526358da6b35eb90d365309dfea451f91e096c"
         },
-        "url": "http://localhost:6776/repos/me/proof/git/commits/36ca88c51023c38b135b243fe054da98d3eb6ac5"
+        "url": "http://localhost:6776/repos/me/test/git/commits/4898416679ef377c29690b3e4fe0ed2c7aa7ef23"
       },
-      "url": "http://localhost:6776/repos/me/proof/git/refs/heads/upload/incoming/2013-12-25-57540359/36ca88"
+      "content": [
+        "http://localhost:6776/repos/me/test/raw/upload/incoming/2014-01-15-79083446/489841/History.md",
+        "http://localhost:6776/repos/me/test/raw/upload/incoming/2014-01-15-79083446/489841/env.js"
+      ],
+      "url": "http://localhost:6776/repos/me/test/git/refs/heads/upload/incoming/2014-01-15-79083446/489841"
     }
   ]
 }
 ```
-So each request like this creates a new set of blobs on a new uniquely
-identified branch.
 
+So each request like this creates a new set of blobs on a new uniquely
+identified branch, per upload per namespace (repo) per user (per server).
+
+### Installed routes
+
+```bash
++ curl -ivs localhost:6776/help
++ json
+* About to connect() to localhost port 6776 (#0)
+*   Trying 127.0.0.1... connected
+> GET /help HTTP/1.1
+> User-Agent: curl/7.22.0 (x86_64-pc-linux-gnu) libcurl/7.22.0 OpenSSL/1.0.1 zlib/1.2.3.4 libidn/1.23 librtmp/2.3
+> Host: localhost:6776
+> Accept: */*
+> 
+< HTTP/1.1 200 OK
+< Connection: close
+< Content-Type: application/json
+< Content-Length: 998
+< Date: Wed, 15 Jan 2014 06:01:29 GMT
+< 
+{ [data not shown]
+* Closing connection #0
+[
+  {
+    "path": "/status",
+    "version": "0.0.3",
+    "middleware": 0,
+    "method": "GET"
+  },
+  {
+    "path": "/repos/:owner/:repo",
+    "version": "0.0.3",
+    "middleware": 4,
+    "method": "GET"
+  },
+  {
+    "path": "/repos/:owner/",
+    "version": "0.0.3",
+    "middleware": 0,
+    "method": "GET"
+  },
+  {
+    "path": "/repo/test",
+    "version": "0.0.3",
+    "middleware": 2,
+    "method": "POST"
+  },
+  {
+    "path": "/repos/:owner/:repo/upload",
+    "version": "0.0.3",
+    "middleware": 5,
+    "method": "POST"
+  },
+  {
+    "path": "/repos/:owner/:repo/git/refs",
+    "version": "0.0.3",
+    "middleware": 4,
+    "method": "GET"
+  },
+  {
+    "path": "/repos/:owner/:repo/git/refs/(.*)",
+    "version": "0.0.3",
+    "middleware": 4,
+    "method": "GET"
+  },
+  {
+    "path": "/repos/:owner/:repo/git/commits/:sha",
+    "version": "0.0.3",
+    "middleware": 4,
+    "method": "GET"
+  },
+  {
+    "path": "/repos/:owner/:repo/git/trees/:sha",
+    "version": "0.0.3",
+    "middleware": 4,
+    "method": "GET"
+  },
+  {
+    "path": "/repos/:owner/:repo/git/blobs/:sha",
+    "version": "0.0.3",
+    "middleware": 4,
+    "method": "GET"
+  },
+  {
+    "path": "/repos/:owner/:repo/raw/(.*)",
+    "version": "0.0.3",
+    "middleware": 4,
+    "method": "GET"
+  },
+  {
+    "path": "/help/",
+    "version": "0.0.3",
+    "middleware": 1,
+    "method": "GET"
+  }
+]
+```
 ### Use API to fetch data
 ```bash
 + curl -ivs http://localhost:6776/repos/me/proof/git/refs
@@ -372,8 +471,40 @@ Date: Thu, 26 Dec 2013 00:02:34 GMT
 
 ## Install
 ```bash
+$ git clone git@github.com:bewest/restify-git-json.git
+$ cd restify-git-json
 $ npm install
 ```
+
+## Run
+```bash
+$ node server.js
+```
+
+#### Environment variables
+
+  * **PORT** Expects to be assigned a tcp port to serve http requests on via
+    **`PORT`** environment variable.  Default is `6776`.
+  * **`BASE`** - the directory housing bare git repos if using 'fs-db' backend.
+    Default value is `./out`.
+  * **`GIT_BACKEND`**  `fs-db` (default) or `memdb`.
+
+##### Choosing a git backend
+
+###### Bare file database **`fs-db`**
+
+Each git database is stored on disk using the "bare" repo layout (no working
+directory, no files are left "checked out").
+See [git repository layout](http://git-scm.com/docs/gitrepository-layout) for
+more information.
+
+The current advice is to use this one if you aren't sure.
+
+###### Memory based database **`memdb`**
+
+The git database is stored in memory, which is cool, but you can only get the
+contents via the http endpoints supported by the server.  (Cloning is
+post-mvp.)  See `lib/handlers/experiments` for WIP.
 
 ## Inspired by
 
@@ -385,20 +516,18 @@ $ npm install
 ## TODO
 ### MVP
 * need to create user/repo - will hit directory creation issue otherwise
-* fetch metadata about user
-* fetch metadata about repo
-* update repo metadata
-* update user metadata
-### the rest
-
-Many to most things, sorry.
-#### low level
 * make options for lots of things so that user can tweak stream
   behavior
   * committer, refs, etc
   * make commit
 
-#### high level
+### the rest
+* fetch metadata about user
+* fetch metadata about repo
+* update repo metadata
+* update user metadata
+
+#### ROADMAP
 
 * get POST json api endpoints working
   * doublecheck API compatibility with github
@@ -414,64 +543,95 @@ Many to most things, sorry.
 * develop import module
 * develop remotes/push module
 
-
-### Inspecting a configured running instance
+#### fetch content
 
 ```bash
-$ ( set -x; du -h -c out/test.git/ && git ls-remote out/test.git/ ) 2>&1 | tee -a README.markdown 
-+ du -h -c out/test.git/
-8.0K	out/test.git/objects/8a
-8.0K	out/test.git/objects/93
-8.0K	out/test.git/objects/98
-8.0K	out/test.git/objects/5f
-8.0K	out/test.git/objects/48
-8.0K	out/test.git/objects/ab
-8.0K	out/test.git/objects/e8
-8.0K	out/test.git/objects/64
-8.0K	out/test.git/objects/4b
-8.0K	out/test.git/objects/60
-8.0K	out/test.git/objects/2c
-8.0K	out/test.git/objects/d3
-8.0K	out/test.git/objects/ee
-12K	out/test.git/objects/2f
-8.0K	out/test.git/objects/47
-8.0K	out/test.git/objects/95
-8.0K	out/test.git/objects/87
-8.0K	out/test.git/objects/12
-12K	out/test.git/objects/1c
-8.0K	out/test.git/objects/9c
-8.0K	out/test.git/objects/d4
-8.0K	out/test.git/objects/e1
-8.0K	out/test.git/objects/cf
-8.0K	out/test.git/objects/7a
-8.0K	out/test.git/objects/d5
-8.0K	out/test.git/objects/8e
-8.0K	out/test.git/objects/91
-8.0K	out/test.git/objects/ba
-8.0K	out/test.git/objects/97
-8.0K	out/test.git/objects/c9
-252K	out/test.git/objects
-60K	out/test.git/refs/heads/incoming/upload
-68K	out/test.git/refs/heads/incoming
-76K	out/test.git/refs/heads
-80K	out/test.git/refs
-340K	out/test.git/
-340K	total
-+ git ls-remote out/test.git/
-ba60d078fdc05d2ebfa0b2deee7809c50347cd59	refs/heads/incoming/ba60d0
-124d4ea0036615edf5f9fb71907b641cb9f1caef	refs/heads/incoming/upload/124d4e
-1c4ea460cda81ebac5b2ef8c4a157073b11b8ca0	refs/heads/incoming/upload/1c4ea4
-1cbf4301951821dbfc74d073264d1e4571711d56	refs/heads/incoming/upload/1cbf43
-477e9df3171918545fca332a71413e1923743e75	refs/heads/incoming/upload/477e9d
-87c203ef63bf5704f39c6feb3e8b4d82e5957a83	refs/heads/incoming/upload/87c203
-8a56e90c3e0d732e7981f1d9f6eb3c30d760d1fc	refs/heads/incoming/upload/8a56e9
-91c110fa80d613e914b8bd9da884563f54c6ee1b	refs/heads/incoming/upload/91c110
-93fb38e6ff926788002f49a5686d03035f7a4ab6	refs/heads/incoming/upload/93fb38
-98512f36f8c35185521e2ba102c7a556877be6ce	refs/heads/incoming/upload/98512f
-9c39dc7b8d387e4288212edadef0b0a4dc61e02c	refs/heads/incoming/upload/9c39dc
-ab9850a41b549ff16fbbbc7605261de6d27cad26	refs/heads/incoming/upload/ab9850
-d535615b6af634cc987fbfb364d56050971ae0e6	refs/heads/incoming/upload/d53561
-e87ae9238e5971348415eeecd8fcfadb237f45b5	refs/heads/incoming/upload/e87ae9
-ee73988fd244da7262f894a99ac9cd38204e5585	refs/heads/incoming/upload/ee7398
-d31738be90a7e4d51960f4f8320e5d874cbe53db	refs/heads/master
++ curl -ivs http://localhost:6776/repos/me/test/raw/upload/incoming/2014-01-15-79083446/489841/History.md
+* About to connect() to localhost port 6776 (#0)
+*   Trying 127.0.0.1... connected
+> GET /repos/me/test/raw/upload/incoming/2014-01-15-79083446/489841/History.md HTTP/1.1
+> User-Agent: curl/7.22.0 (x86_64-pc-linux-gnu) libcurl/7.22.0 OpenSSL/1.0.1 zlib/1.2.3.4 libidn/1.23 librtmp/2.3
+> Host: localhost:6776
+> Accept: */*
+> 
+< HTTP/1.1 200 OK
+< Connection: close
+< Content-Type: text/plain
+< Content-Length: 2192
+< Date: Wed, 15 Jan 2014 06:06:16 GMT
+< 
+{ [data not shown]
+* Closing connection #0
+HTTP/1.1 200 OK
+Connection: close
+Content-Type: text/plain
+Content-Length: 2192
+Date: Wed, 15 Jan 2014 06:06:16 GMT
+
+
+
+v0.0.3 / 2013-12-25
+==================
+
+ * 0.0.2
+
+... commits since last month
+
+  * Ben West - 0.0.2
+  * Ben West - 0.0.1
+  * Ben West - final move cleanup
+  * Ben West - move rest over to single install method
+  * Ben West - record WIP, final move
+  * Ben West - tweak comment
+  * Ben West - delete code moved to handlers
+  * Ben West - move get-blob to own handler
+  * Ben West - move get tree to own handler
+  * Ben West - migrate get-commit handler
+  * Ben West - move upload branch handler
+  * Ben West - get ready to move rest of handlers
+  * Ben West - remove experiment from main area
+  * Ben West - update post-upload-pack
+  * Ben West - move rest of experiments out of way
+  * Ben West - remove previous moved code
+  * Ben West - moving one experiment out of the way
+  * Ben West - start stubbing out experiment
+  * Ben West - remove old version of handler
+  * Ben West - tweak whitespace
+  * Ben West - get moved handler working
+  * Ben West - stub out moving another handler
+  * Ben West - move another handler to urlize
+  * Ben West - update TODO
+  * Ben West - moved to handlers
+  * Ben West - move one handler over
+  * Ben West - get urlize middleware working
+  * Ben West - successfully re-organized this code into ./lib/middleware/
+  * Ben West - depend on new upload middleware
+  * Ben West - initialize upload middleware
+  * Ben West - stub out uploads middleware
+  * Ben West - move more middleware
+  * Ben West - stub out separating more middleware
+  * Ben West - Example re-organize single middleware
+  * Ben West - markup TODOs
+  * Ben West - make ls-remote work and get start on clone
+  * Ben West - ls-remote works now
+  * Ben West - ...
+  * Ben West - add working and non working examples
+  * Ben West - A bit closer?
+  * Ben West - basic fixes
+  * Ben West - update docs
+  * Ben West - make link to blobs work
+  * Ben West - working links
+  * Ben West - remove spurious README
+  * Ben West - Merge branch 'master' of github.com:bewest/restify-git-json
+  * Ben West - Initial commit
+  * Ben West - stub out bunch more stuff
+  * Ben West - Add stubbed out experiments
+  * Ben West - add packages
+  * Ben West - init
+n.n.n / 2013-12-25
+==================
+
+ * 0.0.2
+
 ```
+
