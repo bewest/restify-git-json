@@ -12,6 +12,42 @@ to inspect, create, and manipulate git repos.
 Includes an endpoint to upload files, streaming them into a uniquely
 identified git reference per user per namespace per upload.
 
+## Install
+```bash
+$ git clone git@github.com:bewest/restify-git-json.git
+$ cd restify-git-json
+$ npm install
+```
+
+## Run
+```bash
+$ node server.js
+```
+
+#### Environment variables
+
+  * **PORT** Expects to be assigned a tcp port to serve http requests on via
+    `**PORT**` environment variable.  Default is `6776`.
+  * `**BASE**` - the directory housing bare git repos if using 'fs-db' backend.
+    Default value is `./out`.
+  * `**GIT_BACKEND**`  `fs-db` (default) or `memdb`.
+
+##### Choosing a git backend
+
+###### Bare file database `**fs-db**`
+
+Each git database is stored on disk using the "bare" repo layout (no working
+directory, no files are left "checked out").
+See [git repository layout](http://git-scm.com/docs/gitrepository-layout) for
+more information.
+
+The current advice is to use this one if you aren't sure.
+
+###### Memory based database `**memdb**`
+
+The git database is stored in memory, which is cool, but you can only get the
+contents via the http endpoints supported by the server.  (Cloning is
+post-mvp.)  See `lib/handlers/experiments` for WIP.
 ## API
 
 ### HTTP REST Endpoints
@@ -469,42 +505,6 @@ Date: Thu, 26 Dec 2013 00:02:34 GMT
 ```
 
 
-## Install
-```bash
-$ git clone git@github.com:bewest/restify-git-json.git
-$ cd restify-git-json
-$ npm install
-```
-
-## Run
-```bash
-$ node server.js
-```
-
-#### Environment variables
-
-  * **PORT** Expects to be assigned a tcp port to serve http requests on via
-    **`PORT`** environment variable.  Default is `6776`.
-  * **`BASE`** - the directory housing bare git repos if using 'fs-db' backend.
-    Default value is `./out`.
-  * **`GIT_BACKEND`**  `fs-db` (default) or `memdb`.
-
-##### Choosing a git backend
-
-###### Bare file database **`fs-db`**
-
-Each git database is stored on disk using the "bare" repo layout (no working
-directory, no files are left "checked out").
-See [git repository layout](http://git-scm.com/docs/gitrepository-layout) for
-more information.
-
-The current advice is to use this one if you aren't sure.
-
-###### Memory based database **`memdb`**
-
-The git database is stored in memory, which is cool, but you can only get the
-contents via the http endpoints supported by the server.  (Cloning is
-post-mvp.)  See `lib/handlers/experiments` for WIP.
 
 ## Inspired by
 
