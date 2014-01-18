@@ -638,3 +638,59 @@ n.n.n / 2013-12-25
 
 ```
 
+#### Customize profile creation
+```bash
++ json
++ curl -isv -XPOST 'http://localhost:6776/users/crash/create?email=tesser@tidepool.org&name=Tessy+Tidepool&handle=secret&user\[email\]=example@tidepool.org&user\[name\]=Tessy+Tidepool&author\[name\]=Foo+Bar&author\[email\]=secrete@tidepool.io&committer\[name\]=blip+on+behalf+of+secret&committer\[email\]=blip%4Atideool.io&message=my+create+message'
+* About to connect() to localhost port 6776 (#0)
+*   Trying 127.0.0.1... connected
+> POST /users/crash/create?email=tesser@tidepool.org&name=Tessy+Tidepool&handle=secret&user[email]=example@tidepool.org&user[name]=Tessy+Tidepool&author[name]=Foo+Bar&author[email]=secrete@tidepool.io&committer[name]=blip+on+behalf+of+secret&committer[email]=blip%4Atideool.io&message=my+create+message HTTP/1.1
+> User-Agent: curl/7.22.0 (x86_64-pc-linux-gnu) libcurl/7.22.0 OpenSSL/1.0.1 zlib/1.2.3.4 libidn/1.23 librtmp/2.3
+> Host: localhost:6776
+> Accept: */*
+> 
+< HTTP/1.1 201 Created
+< Connection: close
+< Content-Type: application/json
+< Content-Length: 656
+< Date: Sat, 18 Jan 2014 18:43:31 GMT
+< 
+{ [data not shown]
+* Closing connection #0
+```
+```javascript
+{
+  "name": "Tessy Tidepool",
+  "handle": "secret",
+  "email": "tesser@tidepool.org",
+  "committer": {
+    "name": "blip on behalf of secret",
+    "email": "blipJtideool.io"
+  },
+  "author": {
+    "name": "Foo Bar",
+    "email": "secrete@tidepool.io"
+  },
+  "user": "crash",
+  "url": "http://localhost:6776/users/crash",
+  "updated": {
+    "ref": "upload/incoming/2014-01-18-38611838/538497",
+    "sha": "538497ec4b9db2eca4c7eb63e9acd0ec234a2c9c",
+    "head": {
+      "commit": "538497ec4b9db2eca4c7eb63e9acd0ec234a2c9c",
+      "tree": {
+        "tree": "728aee4bbb551213b1cc829357da3ce118d2b55a",
+        "author": {
+          "name": "Foo Bar",
+          "email": "secrete@tidepool.io"
+        },
+        "committer": {
+          "name": "blip on behalf of secret",
+          "email": "blipJtideool.io"
+        },
+        "message": "my create message"
+      }
+    }
+  }
+}
+```
