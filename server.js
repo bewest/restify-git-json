@@ -53,7 +53,7 @@ module.exports = createServer;
 
 if (!module.parent) {
   var env = require('./env');
-  var port = env.PORT || 6776;
+  var port = env.port || 6776;
 
   var server = createServer(env);
   server.listen(port, function( ) {

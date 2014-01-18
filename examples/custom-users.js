@@ -29,7 +29,7 @@ if (!module.parent) {
   var server = createServer( );
 
   var env = require('../env');
-  var port = env.PORT || 6886;
+  var port = env.port || 6886;
   server.listen(port, function( ) {
     console.log('listening on', server.name, server.url);
   });
