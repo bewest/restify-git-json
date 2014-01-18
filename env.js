@@ -8,5 +8,11 @@ module.exports = (function ( ) {
       // base directory to host bare repos in
     , base: (process.env.BASE || './out')
   };
+  if (process.env.SERVER_KEY && process.env.SERVER_CERTIFICATE) {
+    config.key = process.env.SERVER_KEY;
+    config.certificate = process.env.SERVER_CERTIFICATE;
+    var ssl = require('./lib/ssl');
+    config = ssl(config);
+  }
   return config;
 })( );
