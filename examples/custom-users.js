@@ -16,12 +16,12 @@ function configure (hook, next) {
 
 function createServer( ) {
   var env = require('../env');
-
   var server = gitServer(env);
 
   server.events.on('profile', configure);
   return server;
 }
+
 module.exports = createServer;
 
 if (!module.parent) {
