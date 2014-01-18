@@ -13,7 +13,9 @@ identified git reference per user per namespace per upload.
 
 ## Install
 ```bash
-$ git clone git@github.com:bewest/restify-git-json.git
+$ git clone git@github.com:tidepool-org/restify-git-json.git
+# or
+$ git clone git://github.com/tidepool-org/restify-git-json.git
 $ cd restify-git-json
 $ npm install
 ```

@@ -8,13 +8,18 @@
   },
   "author": "Ben West",
   "license": "BSD-2-Clause",
+  "repository": {
+    "type": "git",
+    "url": "git://github.com/tidepool-org/restify-git-json.git"
+  },
   "dependencies": {
     "js-git": "~0.6.1",
     "restify": "~2.6.0",
     "bunyan": "~0.22.1",
     "git-node": "~0.1.1",
     "git-node-platform": "~0.1.4",
-    "git-fs-db": "git://github.com/bewest/git-fs-db.git#bewest/fix-keys-recurse-directories",
-    "event-stream": "~3.0.20"
+    "git-fs-db": "~0.2.0",
+    "event-stream": "~3.0.20",
+    "formidable": "~1.0.14"
   }
 }
