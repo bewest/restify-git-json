@@ -1,4 +1,61 @@
 
+v0.0.4 / 2014-01-17
+==================
+
+ * allow more profile creation during user setup
+ * tweak committer details: try to be a little more flexible
+ * remove log line, cleaner logs
+ * don't require committer
+ * knit comma,semicolon
+ * make commits default to profile.user.handle and profile.user.email
+ * remove some logging messages
+ * fix port handling :-)
+ * fix missing dependencies
+ * point at tidepool
+ * Merge pull request #1 from bewest/bewest/hooks
+ * add ssl support: fixes #3 speak https
+ * tweak whitespace in example
+ * add note in example
+ * Example server, customizing users
+ * clean up/re-organize sources
+ * start cleaning up sources a bit
+ * fix missing user 404s, actually use profile.json
+ * rotate logic to use event processor
+ * fix bug in event streams: defer binding end event
+ * add new defaultUser logic which should be sane
+ * record WIP, start moving re-usable logic to helpers
+ * record WIP, expose fetchUser to user opts
+ * fix bug in events: hook.map should save results
+ * customize committer, message, author info
+ * name anonymous function
+ * test from scratch with brand new user
+ * Can create user now, with user profile
+ * record WIP, advertise user creation
+ * record WIP, one middleware at a time
+ * record WIP for users
+ * tweak syntax again
+ * bold literal syntax: ticks go inside the star
+ * tweak markdown syntax: bold literals
+ * update README
+ * reduce line count :)
+ * clean up source
+ * Demonstrate automatically listing server side help
+ * Wire up server to use event framework via middleware
+ * fix off by one error
+ * remove dead code, reorg
+ * seems to be working reorg
+ * very sloppy kind of works
+ * broken progress
+ * broken progress
+ * broken broken
+ * clean up dead code
+ * generate links to fetch raw content right away
+ * set up easier endpoint to download raw file
+ * tweak readme with todos
+ * tweak README and clean repo a bit
+ * my version is required in order to work
+ * rework commits to produce urls
+
 
 v0.0.3 / 2013-12-25
 ==================
