@@ -5,6 +5,7 @@ function customUser (profile, next) {
   // customize description
   // actually you can replace the entire thing, supports async fetching.
   profile.description = "Hello world!";
+  // what ever is passed to next will be the result of server.fetchUser(name, cb)
   next(null, profile);
 }
 
