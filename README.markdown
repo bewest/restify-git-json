@@ -517,16 +517,8 @@ Date: Thu, 26 Dec 2013 00:02:34 GMT
 * https://github.com/dominictarr/event-stream#eventstream
 
 ## TODO
-### MVP
-* need to create user/repo - will hit directory creation issue otherwise
-* make options for lots of things so that user can tweak stream
-  behavior
-  * committer, refs, etc
-  * make commit
 
 ### the rest
-* fetch metadata about user
-* fetch metadata about repo
 * update repo metadata
 * update user metadata
 
