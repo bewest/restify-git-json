@@ -5,6 +5,10 @@ SHOULD=--require should
 clean:
 	mkdir -p out
 	rm -Rf out/foobar/
+	rm -Rf out/testUser/
+	rm -Rf out/fooTestUser/
+	rm -f /tmp/test-restify-git-json.sock
+
 travis-cov:
 	NODE_ENV=test node_modules/.bin/mocha  ${BLANKET} ${SHOULD} -R 'travis-cov' ./test/test*.js
 
