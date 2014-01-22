@@ -14,7 +14,10 @@
   },
   "config": {
     "blanket": {
-      "pattern": "/lib/events/ind"
+      "pattern": [
+        "/lib/events/index",
+        "/lib/api/user"
+      ]
     },
     "travis-cov": {
       "threshold": 70

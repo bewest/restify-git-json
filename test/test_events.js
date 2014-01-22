@@ -43,7 +43,6 @@ describe("events module interface", function ( ) {
     /*
     */
     ev.user('another', function fetch (value) {
-      console.log('USER returned value', value);
       value.op.should.be.equal('user');
       value.args.should.be.empty;
       value.name.should.be.equal('another');
