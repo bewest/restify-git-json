@@ -2,6 +2,9 @@
 BLANKET=--require blanket 
 SHOULD=--require should
 
+clean:
+	mkdir -p out
+	rm -Rf out/foobar/
 travis-cov:
 	NODE_ENV=test node_modules/.bin/mocha  ${BLANKET} ${SHOULD} -R 'travis-cov' ./test/test*.js
 

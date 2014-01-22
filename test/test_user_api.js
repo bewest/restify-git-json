@@ -50,8 +50,7 @@ describe('users api', function ( ) {
     change.name = 'Any Valid Name';
     var updates = {name: change.name};
     updates.user = JSON.parse(JSON.stringify(change));
-    var user = { };
-    user.user = JSON.parse(JSON.stringify(change));
+    var user = JSON.parse(JSON.stringify(change));
     updates.user = user;
     var commit = {
           save: true
