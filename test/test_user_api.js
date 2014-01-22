@@ -8,8 +8,8 @@ describe('users api', function ( ) {
   var userFetch = require('../lib/api/users/fetch');
   var userUpdate = require('../lib/api/users/update');
   it('initialize api ok', function (done) {
-    userUpdate(config, server);
-    userFetch(config, server);
+    userUpdate.register(config, server);
+    userFetch.register(config, server);
     server.fetchUser.should.be.ok;
     server.updateUser.should.be.ok;
     done( );
