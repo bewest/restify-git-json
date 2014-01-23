@@ -15,8 +15,11 @@
   "config": {
     "blanket": {
       "pattern": [
-        "/lib/events/index",
-        "/lib/api/user"
+        "/lib/events/index"
+      , "/lib/api"
+      , "/lib/handlers"
+      , "/lib/middleware"
+      , "/lib/stream"
       ]
     },
     "travis-cov": {

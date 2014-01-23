@@ -2,14 +2,19 @@
 var restify = require('restify');
 var clients = require('restify/lib/clients');
 var es = require('event-stream');
-var es = require('fs');
+var fs = require('fs');
 var mimeStream = require('mime-multipart-stream');
-function testContent (T) {
+var http = require('http');
+function defaultContent ( ) {
   var fileOne = es.readArray(["dummy content hello world text"]);
-  var fileTwo = fs.createReadStream('../README.markdown');
+  var fileTwo = fs.createReadStream('./README.markdown');
+  var content = {fileOne: fileOne, fileTwo: fileTwo};
+  return content;
+}
+function testContent (T) {
+  var content = defaultContent( );
   var pre = "====";
   var boundary =  pre + pre + pre + "TIDEPOOL" + "TESTBOUNDARY" + "EOF";
-  var content = {fileOne: fileOne, fileTwo: fileTwo};
   var stream = mimeStream({boundary: boundary, type: 'form-data'});
   function make (name, part) {
     var o = {
@@ -22,6 +27,16 @@ function testContent (T) {
   }
   stream.add(make('testfileOne', content.fileOne));
   stream.add(make('testfileTwo', content.fileTwo));
+  function message(m) {
+    var o = {
+      disposition: 'form-data; name="message";'
+    , type: 'x-www-form-urlencoded'
+    , transferEncoding: 'quoted-printable'
+    , body: es.readArray([m])
+    };
+    stream.add(o);
+  }
+  stream.message = message;
   return stream;
 }
 function createClient (opts) {
@@ -48,33 +63,58 @@ function createClient (opts) {
     var url = '/repos/' + name + '/test/upload';
     var config = {
       'content-type': 'multipart/form-data'
+    , path: url
+    // , url: url
+    , method: 'POST' 
     };
     // options.
-    var mimes = testContent(content);
-    var str = restify.createHttpClient(opts);
-    // function write (config, cb) { client.request(options, begin); }
-    var req = str.post(config, begin);
-    // req.on('error', error);
-    // es.pipeline(mimes, req);
-    // content.pipe(req);
-    // return str.post.apply(client, post(url, content, start);
-    function begin (err, req) {
-      console.log("UPLOAD REQUEST", 'error', err, "RES", req);
-      es.pipeline(mimes, req);
-      req.on('result', done);
-      req.on('error', error);
+    // var mimes = testContent(content);
+    var mimes = defaultContent(content);
+    var fopts = { port: 9045
+      , url: 'http://localhost:6776/'
     }
-    // var ERROR;
-    function error (err, res) {
-      // ERROR = err;
-      console.log("ERROR ERROR", err);
-      fn(err, null);
+    var ropts = {
+        method: 'POST'
+      , uri: 'http://localhost/' + url
+      //, uri: url
+      , path: url
+      // , socketPath: opts.socketPath
+      // , host: 'localhost'
+      // , port: 6776
+      , socketPath: opts.socketPath
+      // , headers: { //'content-type': 'multipart/form-data' }
+
+    };
+    /*
+    var req = http.request(ropts, function up (res) {
+    es.pipeline(mimes, req, es.writeArray(function (err, buffers) {
+      console.log('INTER B', req);
+      req.end( );
+    }));
+      es.pipeline(res, es.writeArray(done));
+    });
+    mimes.message('this is a personalized commit message');
+    // mimes.pipe(req);
+    // req.end( );
+    req.on('error', done);
+    return;
+    */
+    var request = require('request');
+    var req = request.post(ropts, start);
+    var form = req.form( );
+    form.append("message", "this is my commit message");
+    form.append('fileOne', mimes.fileOne, {filename: 'fileOne', knownLength: 30, contentType: 'text/plain'});
+    form.append('fileTwo', mimes.fileTwo);
+    function start (err, res, body) {
+      console.log("UPLOADED BODY", err, body);
+      fn(err, JSON.parse(body));
     }
-    function done (err, res) {
-      console.log("UPLOAD RESPONSE", 'error', err, "RES", res);
-      es.pipeline(res, es.writeArray(fn));
-      // fn(null, result);
+    return;
+    function done (err, result) {
+      fn(err, JSON.parse(result[0]));
+      
     }
+
   }
   function download (url) {
 
@@ -98,6 +138,7 @@ describe("restify-git-json server", function ( ) {
     base: './out'
   , socketPath: '/tmp/test-restify-git-json.sock'
   };
+  this.profile = { };
   after(function (done) {
     server.close( );
     done( );
@@ -122,48 +163,104 @@ describe("restify-git-json server", function ( ) {
   });
   var profile;
   describe("users api", function ( ) {
+    var my = { };
+    this.profile = my;
     var foobarUser = { handle: 'fooTestUser'
       , user: { name: 'Foo Test User', email: 'test@tidepool.io' }
     };
     var client = createClient(opts);
-    testCreateUser(client, foobarUser, onCreated);
-    function onCreated (err, result) {
-      it('should fetch a created user', function (done) {
-        result.user.name.should.equal(foobarUser.user.name);
+    
+    it('should create a new user', function (done) {
+      testCreateUser(client, foobarUser, function (err, result) {
+        my.profile = result;
+        this.profile = result;
         done( );
       });
-      testFetchUser(client, foobarUser.handle);
+    });
+
+    it('should not allow repeated user creation', function (done) {
+      var name = my.profile.handle;
+      client.createUser(name, my.profile, function (err, req, res, result) {
+        console.log('REFUSAL', result);
+        err.statusCode.should.equal(405);
+        result.old.should.be.ok;
+        done( );
+      });
+    });
+
+    function validFetchUser (client, name, fn) {
+      client.userInfo(client, name, function (err, req, res, body) {
+        console.log("userInfo", body);
+        body.should.be.ok;
+        body.user.name.should.be.ok;
+        my.profile = body;
+        this.profile = body;
+        console.log(this.profile);
+        fn(err, body);
+      });
     }
-    function testFetchUser (client, name) {
-      it('should sync creation', function ( ) {
-        it('should fetch a created user', function (done) {
-          client.userInfo( function (err, req, res, body) {
-            console.log("userInfo", body);
-            body.should.be.ok;
-            body.user.name.should.be.ok;
-            profile = body;
-            done( );
-            // testUploadContent(pro);
-          });
+
+    it('should then update', function ( ) {
+      console.log('should then update');
+      testUpdateUser(done);
+      function done (err, result) {
+      }
+    });
+
+    it('should then upload', function (done) {
+      testUploadContent(my.profile, finish);
+      function finish (err, result) {
+        console.log("DONE DONE", result);
+        console.log("DONE ERR", err);
+        result.body.should.exist;
+        result.body.ref.should.exist;
+        result.body.content.should.exist;
+        console.log("DONE OK", result.body.head.tree);
+        my.upload = result;
+        done( );
+      }
+    });
+
+    it('should then download content', function (done) {
+      console.log("DOWNLOAD", my.upload);
+      downloadContent(my.upload, function (err, results) {
+        done( );
+      });
+    });
+
+    function downloadContent (download, fn) {
+
+      es.pipeline(es.readArray(download.body.content)
+        , es.map(fetch)
+        , es.writeArray(done)
+        );
+
+      function fetch (url, next) {
+        console.log("FETCH URL", url); 
+        url = url.replace("http:/localhost", "");
+        url = url.replace("http://localhost", "");
+        console.log("FETCH URL", url); 
+        client.get(url, function (err, req, res, body) {
+          // console.log("FETCH FETCH", arguments);
+          res.body.should.be.ok;
+          next(null, res.body);
         });
-        it('should then update', function (done) {
-          console.log('should then update');
-          testUpdateUser(done);
-        });
-        it('should then upload', function (done) {
-          testUploadContent(profile, done);
-          // done( );
-        });
-      })
+      }
+
+      function done (err, results) {
+        download.downloaded = results;
+        fn(err, results);
+      }
     }
 
     function testUpdateUser (finish) {
       console.log("XXXXX");
       // it('should update user', function (done) {
-        console.log("PROFILE FOR UPDATE", profile);
-        var update = JSON.parse(JSON.stringify(profile));
-        update.user.name = "Bar Update";
-        update.user.email = "update@tidepool.io";
+        console.log("PROFILE FOR UPDATE", my.profile, this.profile);
+        var update = JSON.parse(JSON.stringify(my.profile));
+        var author = { name: "Bar Update", email: "updated@tidepool.io" };
+        update.user.user = author;
+        update.user.author = author;
         update.user.data = { custom: 'property' };
         update.user.user = JSON.parse(JSON.stringify(update.user))
         name = update.name;
@@ -182,12 +279,12 @@ describe("restify-git-json server", function ( ) {
     function testUploadContent (profile, fn) {
     // describe("uploaded content", function ( ) {
         console.log("YYYY");
-        it('user should be able to upload content into git', function ( ) {
-          client.uploadContent(profile, 'test', function (err, results) {
-            console.log("UPLOADED", results);
-            fn(err, results);
-          });
+        // it('user should be able to upload content into git', function ( ) {
+        client.uploadContent(profile, 'test', function (err, results) {
+          console.log("UPLOADED", results);
+          fn(err, results);
         });
+        //});
     // });
     }
 
@@ -220,11 +317,12 @@ function testCreateUser (client, update, fn) {
   var R = { };
   function finish (err, result) {
     if (--left == 0) {
+      console.log('LEFT', left, R);
       fn(R.err, R.result);
     }
   }
   // describe("user creation REST api", function ( ) {
-    it('should create a user', function (done) {
+    // it('should create a user', function (done) {
       var name = update.handle;
       client.createUser(name, update, function (err, req, res, result) {
         console.log('CREATED', result);
@@ -234,20 +332,26 @@ function testCreateUser (client, update, fn) {
         result.should.be.ok;
         R.err = err;
         R.result = result;
-        done( );
-        finish(err, result);
+        fn(err, result);
+        // after( );
+        // finish(err, result);
+        // done( );
       });
-    });
+    // });
+    function after ( ) {
+    describe("repeated creation", function ( ) {
     it('should not allow repeated user creation', function (done) {
-      var name = update.handle;
+      var name = my.profile.handle;
       client.createUser(name, update, function (err, req, res, result) {
         console.log('REFUSAL', result);
         err.statusCode.should.equal(405);
         result.old.should.be.ok;
         // fn(err, result);
-        done( );
-        finish(err, result);
+        // finish(err, result);
       });
+      done( );
     });
+    });
+    }
   // });
 }
