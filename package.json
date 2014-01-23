@@ -45,6 +45,7 @@
     "blanket": "~1.1.6",
     "coveralls": "~2.6.1",
     "mime-multipart-stream": "~0.1.2",
-    "request": "~2.33.0"
+    "request": "~2.33.0",
+    "mocha-lcov-reporter": "0.0.1"
   }
 }
