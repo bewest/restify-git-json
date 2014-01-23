@@ -55,7 +55,9 @@ function createClient (opts) {
     return client.post(url, update, fn);
   }
   function createUser (name, update, fn) {
-    var url = '/users/' + name + '/create';
+    var params = '?name=' + update.handle;
+               + '&email=' + update.email;
+    var url = '/users/' + name + '/create' + params;
     return client.post(url, update, fn);
   }
   function uploadContent (profile, content, fn) {
