@@ -234,18 +234,21 @@ describe("restify-git-json server", function ( ) {
       }
     });
 
-    it('should then download content', function () {
-      it('should then sync content', function (done) {
+    it('should then download content', function (done) {
         console.log("DOWNLOAD", my.upload);
         downloadContent(my.upload, function (err, results) {
           done( );
         });
-      });
     });
 
     it('should dereference urls', function (done) {
       var downloads;
       var urls = [ my.upload.body.head.url , my.upload.body.url ];
+      urls.push(['/repos', my.profile.handle + 'xxx', 'create'].join('/'));
+      urls.push(['/repos', my.profile.handle, 'test/git/refs'].join('/'));
+      urls.push(['/repos', my.profile.handle, 'test/git/refs/'].join('/'));
+      urls.push(['/repos', my.profile.handle, '/test'].join('/'));
+      urls.push(['/repos', my.profile.handle].join('/'));
       downloads = walkDownload(more, finish);
       urls.forEach(downloads.write);
       downloads.end( );
