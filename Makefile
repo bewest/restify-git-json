@@ -10,22 +10,27 @@ clean:
 	rm -f /tmp/test-restify-git-json.sock
 
 travis-cov: clean
+	make clean
 	NODE_ENV=test node_modules/.bin/mocha  ${BLANKET} ${SHOULD} -R 'travis-cov' ./test/test*.js
 
 coveralls: clean
+	make clean
 	NODE_ENV=test \
 	./node_modules/.bin/mocha ${BLANKET} ${SHOULD}  -R mocha-lcov-reporter \
     test/test*.js | ./coverall.sh
 
 coverhtml: clean
+	make clean
 	./node_modules/.bin/mocha ${BLANKET} ${SHOULD}  -R html-cov test/*.js > test/coverage.html
 
 precover: clean
+	make clean
 	./node_modules/.bin/mocha ${BLANKET} ${SHOULD} -R html-cov test/*.js | w3m -T text/html
 
 test: clean
+	make clean
 	mocha --verbose --require should -R tap test/*.js
 
-travis: clean test clean travis-cov clean coveralls clean coverhtml
+travis: clean test travis-cov coveralls coverhtml
 
 .PHONY: test clean
