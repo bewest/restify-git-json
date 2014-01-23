@@ -60,6 +60,16 @@ function createClient (opts) {
     var url = '/users/' + name + '/create' + params;
     return client.post(url, update, fn);
   }
+  function download (url, fn) {
+    console.log("DOWNLOADING", url);
+    url = url.replace('http://localhost', '');
+    url = url.replace('http:/localhost', '');
+    console.log("URL", url);
+    client.get(url, function (err, res, req, body) {
+      console.log("DOWNLOADING", url, body);
+      fn(err, body);
+    });
+  }
   function uploadContent (profile, content, fn) {
     var name = profile.handle;
     var url = '/repos/' + name + '/test/upload';
@@ -72,8 +82,8 @@ function createClient (opts) {
     // options.
     // var mimes = testContent(content);
     var mimes = defaultContent(content);
-    var fopts = { port: 9045
-      , url: 'http://localhost:6776/'
+    var fopts = {
+      url: 'http://localhost:6776/'
     }
     var ropts = {
         method: 'POST'
@@ -118,7 +128,7 @@ function createClient (opts) {
     }
 
   }
-  function download (url) {
+  function xxdownload (url) {
 
   }
   function downloadContent (content) {
@@ -129,6 +139,7 @@ function createClient (opts) {
   client.createUser = createUser;
   client.updateUser = updateUser;
   client.uploadContent = uploadContent;
+  client.download = download;
   return client;
 }
 module.exports.before = function ( ) {
@@ -223,12 +234,80 @@ describe("restify-git-json server", function ( ) {
       }
     });
 
-    it('should then download content', function (done) {
-      console.log("DOWNLOAD", my.upload);
-      downloadContent(my.upload, function (err, results) {
-        done( );
+    it('should then download content', function () {
+      it('should then sync content', function (done) {
+        console.log("DOWNLOAD", my.upload);
+        downloadContent(my.upload, function (err, results) {
+          done( );
+        });
       });
     });
+
+    it('should dereference urls', function (done) {
+      var downloads;
+      var urls = [ my.upload.body.head.url , my.upload.body.url ];
+      downloads = walkDownload(more, finish);
+      urls.forEach(downloads.write);
+      downloads.end( );
+      function finish (err, results) {
+        done( );
+      }
+      function more (err, results) {
+        console.log("MORE", results);
+        if (results.result) {
+          if (results.result.body) {
+            var body = results.result.body;
+            if (results.result.body && results.result.body.url) {
+              downloads.write(body.url);
+            }
+            if (results.result.type == 'tree') {
+              console.log('FOUND TREE', results, Object.keys(result.result));
+              body = result.result;
+            }
+
+            var keys = Object.keys(body);
+            console.log("MORE FOUND", body);
+            keys.forEach(function (i, k) {
+              if (body[i].url) {
+                console.log("MORE URLS", body[i].url);
+                downloads.write(body[i].url);
+              }
+            });
+          }
+        }
+      }
+    });
+    function walkDownload (visit, fn) {
+      // var urls = [ upload.body.head.url , upload.body.url ];
+      var tr = es.through(write);
+      function write(url) {
+        var self = this;
+        client.download(url, function (err, result) {
+          var m = {err:err, url: url, result: result};
+          crawl(err, m);
+          self.emit('data', m);
+        });
+      }
+      function down (url, next) {
+        client.download(url, function (err, result) {
+          var m = {err:err, url: url, result: result};
+          crawl(err, m);
+          next(null, m);
+        });
+      }
+      function crawl (err, result) {
+        console.log("CRAWL CRAWL", result);
+        if (visit) {
+          visit(err, result);
+        }
+      }
+                    // es.readArray(urls),
+      var stream = es.pipeline( tr, es.writeArray(done));
+      function done(err, results) {
+        fn(err, results);
+      }
+      return stream;
+    }
 
     function downloadContent (download, fn) {
 
