@@ -19,6 +19,8 @@ $ git clone git://github.com/tidepool-org/restify-git-json.git
 $ cd restify-git-json
 $ npm install
 ```
+[![Build Status](https://travis-ci.org/tidepool-org/restify-git-json.png?branch=bewest/tests/init)](https://travis-ci.org/tidepool-org/restify-git-json)
+[![Coverage Status](https://coveralls.io/repos/bewest/restify-git-json/badge.png)](https://coveralls.io/r/bewest/restify-git-json)
 
 ## Run
 ```bash
