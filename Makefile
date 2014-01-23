@@ -26,6 +26,6 @@ precover: clean
 test: clean
 	mocha --verbose --require should -R tap test/*.js
 
-travis: clean test travis-cov coveralls coverhtml
+travis: clean test clean travis-cov clean coveralls clean coverhtml
 
 .PHONY: test clean
