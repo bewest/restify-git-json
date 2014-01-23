@@ -17,7 +17,7 @@ coveralls: clean
 	make clean
 	NODE_ENV=test \
 	./node_modules/.bin/mocha ${BLANKET} ${SHOULD}  -R mocha-lcov-reporter \
-    test/test*.js | ./coverall.sh
+    test/test*.js | ./coverall.sh && echo "coverage reported to coveralls" || echo ""
 
 coverhtml: clean
 	make clean
