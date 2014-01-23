@@ -15,11 +15,11 @@
   "config": {
     "blanket": {
       "pattern": [
-        "/lib/events/index"
-      , "/lib/api"
-      , "/lib/handlers"
-      , "/lib/middleware"
-      , "/lib/stream"
+        "/lib/events/index",
+        "/lib/api",
+        "/lib/handlers",
+        "/lib/middleware",
+        "/lib/stream"
       ]
     },
     "travis-cov": {
@@ -44,6 +44,7 @@
     "travis-cov": "~0.2.4",
     "blanket": "~1.1.6",
     "coveralls": "~2.6.1",
-    "mime-multipart-stream": "~0.1.2"
+    "mime-multipart-stream": "~0.1.2",
+    "request": "~2.33.0"
   }
 }

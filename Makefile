@@ -28,4 +28,4 @@ test: clean
 
 travis: clean test travis-cov coveralls coverhtml
 
-.PHONY: test
+.PHONY: test clean
