@@ -118,7 +118,7 @@ function createClient (opts) {
     form.append('fileOne', mimes.fileOne, {filename: 'fileOne', knownLength: 30, contentType: 'text/plain'});
     form.append('fileTwo', mimes.fileTwo);
     function start (err, res, body) {
-      console.log("UPLOADED BODY", err, body);
+      // console.log("UPLOADED BODY", err, body);
       fn(err, JSON.parse(body));
     }
     return;
@@ -131,8 +131,7 @@ function createClient (opts) {
   function xxdownload (url) {
 
   }
-  function downloadContent (content) {
-  }
+  function xxdownloadContent (content) { }
   client.help = help;
   client.status = status;
   client.userInfo = userInfo;
@@ -161,7 +160,7 @@ describe("restify-git-json server", function ( ) {
     server.listen(opts.socketPath, function ( ) {
       client = createClient(opts);
       client.status(function (err, req, res, body) {
-        console.log("STATUS", body);
+        // console.log("STATUS", body);
         body.should.startWith("OK");
         done( );
       });
@@ -169,7 +168,7 @@ describe("restify-git-json server", function ( ) {
   });
   it('should respond to help', function (done) {
     client.help(function (err, req, res, body) {
-      console.log("HELP", arguments);
+      // console.log("HELP", arguments);
       body.length.should.be.above(1);
       done( );
     });
@@ -194,7 +193,7 @@ describe("restify-git-json server", function ( ) {
     it('should not allow repeated user creation', function (done) {
       var name = my.profile.handle;
       client.createUser(name, my.profile, function (err, req, res, result) {
-        console.log('REFUSAL', result);
+        // console.log('REFUSAL', result);
         err.statusCode.should.equal(405);
         result.old.should.be.ok;
         done( );
@@ -203,24 +202,29 @@ describe("restify-git-json server", function ( ) {
 
     function validFetchUser (client, name, fn) {
       client.userInfo(client, name, function (err, req, res, body) {
-        console.log("userInfo", body);
+        // console.log("userInfo", body);
         body.should.be.ok;
         body.user.name.should.be.ok;
         my.profile = body;
         this.profile = body;
-        console.log(this.profile);
+        console.log('validFetchUser', this.profile);
         fn(err, body);
       });
     }
 
-    it('should then update', function ( ) {
+    it('should then update', function (done) {
       console.log('should then update');
-      testUpdateUser(done);
-      function done (err, result) {
-      }
+      testUpdateUser(finish);
+      function finish (err, result) { done( ); }
     });
+    // it('should then sync update', function ( ) { });
 
+    // testUploadContent(my.profile, onUploaded);
+    // function onUploaded (err, result) { }
     it('should then upload', function (done) {
+      this.timeout(12000);
+      my.profile.handle.should.be.ok;
+      console.log("UPLOADING to", my.profile);
       testUploadContent(my.profile, finish);
       function finish (err, result) {
         console.log("DONE DONE", result);
@@ -233,87 +237,186 @@ describe("restify-git-json server", function ( ) {
         done( );
       }
     });
+    // it('should then sync upload', function ( ) { });
 
     it('should then download content', function (done) {
+        this.timeout(4000);
         console.log("DOWNLOAD", my.upload);
+        my.upload.should.be.ok;
         downloadContent(my.upload, function (err, results) {
           done( );
         });
     });
+    // it('should then sync upload', function ( ) { });
+
 
     it('should dereference urls', function (done) {
+      this.timeout(20000);
       var downloads;
-      var urls = [ my.upload.body.head.url , my.upload.body.url ];
-      urls.push(['/repos', my.profile.handle + 'xxx', 'create'].join('/'));
-      urls.push(['/repos', my.profile.handle, 'test/git/refs'].join('/'));
-      urls.push(['/repos', my.profile.handle, 'test/git/refs/'].join('/'));
-      urls.push(['/repos', my.profile.handle, '/test'].join('/'));
-      urls.push(['/repos', my.profile.handle].join('/'));
+      console.log("DEREFERENCE", my.upload);
+      var urls = [ my.upload.body.url, my.upload.body.head.url ];
       downloads = walkDownload(more, finish);
-      urls.forEach(downloads.write);
-      downloads.end( );
+      // downloads.resume( );
+      // urls.forEach(downloads.write);
+      urls.push(['/repos', my.profile.handle, 'test/git/refs'].join('/'));
+      urls.push(['/users', my.profile.handle + 'xxx', 'create'].join('/'));
+      urls.push(['/repos', my.profile.handle, 'test/git/refs/'].join('/'));
+      urls.push(['/repos', my.profile.handle, 'test'].join('/'));
+      urls.push(['/repos', my.profile.handle].join('/'));
+      es.readArray(urls).pipe(downloads.resume( ));
+      var Visited = [ ];
+      var V = { };
+      // downloads.resume( );
+      // downloads.end( );
       function finish (err, results) {
         done( );
       }
+      function Q (u) {
+        if (V[u]) {
+          return false;
+        }
+        V[u] = u;
+        Visited.push(u);
+        return u;
+      }
       function more (err, results) {
-        console.log("MORE", results);
+        console.log("MORE", err, results);
+        var add = [ ];
+        function validQ (u) {
+          if (Q(u)) {
+            add.push(u);
+            return u;
+          }
+          return false;
+        }
+        validQ(results.url);
+        var latest = results.url;
         if (results.result) {
+          if (results.result.type == 'blob') {
+            // console.log('CRAWL QUIT');
+            // return [ ];
+          }
+          var body;
+          if (results.result.type == 'tree') {
+            console.log('FOUND TREE', results, Object.keys(result.result));
+            body = result.result;
+          }
           if (results.result.body) {
-            var body = results.result.body;
+            body = results.result.body;
+            console.log('MORE BODY TYPE, url', body.type, body.url);
+            if (body.type == 'commit') {
+              validQ(body.url);
+              return add;
+            }
+            if (results.result.url == latest) {
+            }
             if (results.result.body && results.result.body.url) {
-              downloads.write(body.url);
-            }
-            if (results.result.type == 'tree') {
-              console.log('FOUND TREE', results, Object.keys(result.result));
-              body = result.result;
-            }
+              // downloads.write(body.url);
 
+              if (body.url !== results.url)// && results.result.type !== 'tree')
+                validQ(body.url);
+              // add.push(body.url);
+            }
+          }
+          if (body) {
             var keys = Object.keys(body);
             console.log("MORE FOUND", body);
             keys.forEach(function (i, k) {
               if (body[i].url) {
                 console.log("MORE URLS", body[i].url);
-                downloads.write(body[i].url);
+                // downloads.write(body[i].url);
+                validQ(body[i].url);
+                // add.push(body[i].url);
               }
             });
           }
         }
+        return add;
       }
     });
+    // it('should then sync upload', function ( ) { });
     function walkDownload (visit, fn) {
       // var urls = [ upload.body.head.url , upload.body.url ];
       var tr = es.through(write);
+      var found = { };
       function write(url) {
         var self = this;
+        if (found[url]) {
+          // self.emit( );
+          return ;
+        }
+        // return self.emit('data', url);
+        self.push(url);
+        return;
         client.download(url, function (err, result) {
           var m = {err:err, url: url, result: result};
-          crawl(err, m);
-          self.emit('data', m);
+          if (!found[url]) {
+            found[url] = m;
+            // self.emit('data', m);
+            self.push('data', m);
+          }
+          // crawl(err, m);
         });
       }
       function down (url, next) {
+        if (found[url]) {
+          // return next(null, found[url]);
+          next( );
+        }
         client.download(url, function (err, result) {
           var m = {err:err, url: url, result: result};
-          crawl(err, m);
-          next(null, m);
+          crawl(err, m, next);
+          // next(null, m);
         });
       }
-      function crawl (err, result) {
+      var finished = false;
+      function crawl (err, result, next) {
         console.log("CRAWL CRAWL", result);
         if (visit) {
-          visit(err, result);
+          var add = visit(err, result);
+          var U = result.url;
+          console.log("CRAWL ADD", add);
+          if (add && add.length > 0) {
+            stream.pause( );
+            function valid (url, pass) {
+              if (found[url] || url == U || url == result.url) { pass( ); }
+              found[url] == result;
+              pass(null, url);
+            }
+            var load = walkDownload(visit, function (e, rs) {
+              console.log("CRAWL DEEP", add, e, rs);
+              found[U] = found[U] || {};
+              result.deep = rs;
+              found[U].deep = (e || rs);
+              next(err, result);
+              stream.resume( );
+
+            });
+            var inputs = es.readArray(add || [ ]);
+            inputs.on('end', load.end);
+            es.pipeline(inputs, es.map(valid), load.resume( ));
+            stream.resume( );
+            return 
+          }
         }
+          // es.readArray(add).pipe(tr, {end:false});
+          // if (add) { add.forEach(tr.write); }
+          
+        next(err, result);
       }
                     // es.readArray(urls),
-      var stream = es.pipeline( tr, es.writeArray(done));
+      var stream = es.pipeline(tr, es.map(down), es.writeArray(done))
       function done(err, results) {
+        console.log("DOWNLOADING CRAWL DONE", err, results);
         fn(err, results);
       }
-      return stream;
+      return tr;
     }
 
     function downloadContent (download, fn) {
 
+      console.log("DOWNLAODCONTENT", download);
+      download.body.should.be.ok;
       es.pipeline(es.readArray(download.body.content)
         , es.map(fetch)
         , es.writeArray(done)
@@ -354,7 +457,7 @@ describe("restify-git-json server", function ( ) {
           result.user.name.should.equal(update.user.name)
           result.user.data.should.be.ok;
           result.user.data.custom.should.equal(update.user.data.custom);
-          if (finish) { finish(result); }
+          if (finish) { finish(err, result); }
           // done( );
         });
       // });
