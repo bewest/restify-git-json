@@ -291,7 +291,7 @@ describe("restify-git-json server", function ( ) {
         }
         validQ(results.url);
         var latest = results.url;
-        if (results.result) {
+        if (results.result && !results.err) {
           if (results.result.type == 'blob') {
             // console.log('CRAWL QUIT');
             // return [ ];
@@ -319,8 +319,8 @@ describe("restify-git-json server", function ( ) {
             }
           }
           if (body) {
-            var keys = Object.keys(body);
             console.log("MORE FOUND", body);
+            var keys = Object.keys(body);
             keys.forEach(function (i, k) {
               if (body[i].url) {
                 console.log("MORE URLS", body[i].url);
