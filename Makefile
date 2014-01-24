@@ -7,6 +7,7 @@ clean:
 	rm -Rf out/foobar/
 	rm -Rf out/testUser/
 	rm -Rf out/fooTestUser/
+	mkdir -p out/fooTestUser/
 	rm -f /tmp/test-restify-git-json.sock
 
 travis-cov: clean
