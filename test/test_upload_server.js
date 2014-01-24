@@ -259,10 +259,10 @@ describe("restify-git-json server", function ( ) {
       // downloads.resume( );
       // urls.forEach(downloads.write);
       urls.push(['/repos', my.profile.handle, 'test/git/refs'].join('/'));
-      urls.push(['/users', my.profile.handle + 'xxx', 'create'].join('/'));
       urls.push(['/repos', my.profile.handle, 'test/git/refs/'].join('/'));
       urls.push(['/repos', my.profile.handle, 'test'].join('/'));
       urls.push(['/repos', my.profile.handle].join('/'));
+      urls.push(['/users', my.profile.handle + 'xxx', 'create'].join('/'));
       es.readArray(urls).pipe(downloads.resume( ));
       var Visited = [ ];
       var V = { };
