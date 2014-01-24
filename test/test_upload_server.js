@@ -298,7 +298,7 @@ describe("restify-git-json server", function ( ) {
           }
           var body;
           if (results.result.type == 'tree') {
-            console.log('FOUND TREE', results, Object.keys(result.result));
+            console.log('FOUND TREE', results);
             body = result.result;
           }
           if (results.result.body) {
