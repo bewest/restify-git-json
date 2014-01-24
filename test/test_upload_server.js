@@ -320,15 +320,22 @@ describe("restify-git-json server", function ( ) {
           }
           if (body) {
             console.log("MORE FOUND", body);
-            var keys = Object.keys(body);
-            keys.forEach(function (i, k) {
-              if (body[i].url) {
-                console.log("MORE URLS", body[i].url);
-                // downloads.write(body[i].url);
-                validQ(body[i].url);
-                // add.push(body[i].url);
-              }
-            });
+            if (typeof body == "Array") {
+              body.forEach(validate);
+            } else {
+              validate(body);
+            }
+            function validate (body) {
+              var keys = Object.keys(body);
+              keys.forEach(function (i, k) {
+                if (body[i].url) {
+                  console.log("MORE URLS", body[i].url);
+                  // downloads.write(body[i].url);
+                  validQ(body[i].url);
+                  // add.push(body[i].url);
+                }
+              });
+            }
           }
         }
         return add;
