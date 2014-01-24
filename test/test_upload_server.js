@@ -247,7 +247,7 @@ describe("restify-git-json server", function ( ) {
           done( );
         });
     });
-    // it('should then sync upload', function ( ) { });
+    it('should then sync upload', function ( ) { });
 
 
     it('should dereference urls', function (done) {
