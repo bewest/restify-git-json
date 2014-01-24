@@ -251,9 +251,10 @@ describe("restify-git-json server", function ( ) {
 
 
     it('should dereference urls', function (done) {
-      this.timeout(20000);
+      this.timeout(10000);
       var downloads;
       console.log("DEREFERENCE", my.upload);
+      my.upload.should.be.ok;
       var urls = [ my.upload.body.url, my.upload.body.head.url ];
       downloads = walkDownload(more, finish);
       // downloads.resume( );
