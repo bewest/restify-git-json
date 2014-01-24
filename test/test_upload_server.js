@@ -7,7 +7,7 @@ var mimeStream = require('mime-multipart-stream');
 var http = require('http');
 function defaultContent ( ) {
   var fileOne = es.readArray(["dummy content hello world text"]);
-  var fileTwo = fs.createReadStream('./README.markdown');
+  var fileTwo = fs.createReadStream('./Makefile');
   var content = {fileOne: fileOne, fileTwo: fileTwo};
   return content;
 }
