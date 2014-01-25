@@ -1,10 +1,10 @@
 
 var config = {base: './out/'};
 var middleware = require('../lib/middleware/')
-middleware(config);
 describe('users api', function ( ) {
   var events = require('../lib/events');
   var server = {events: events(config)};
+  middleware(config, server);
   var userFetch = require('../lib/api/users/fetch');
   var userUpdate = require('../lib/api/users/update');
   it('initialize api ok', function (done) {

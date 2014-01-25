@@ -148,6 +148,8 @@ describe("restify-git-json server", function ( ) {
   var server, client;
   var opts = {
     base: './out'
+  , log_stream: 'rotating-file'
+  , log_path: './logs/test.log'
   , socketPath: '/tmp/test-restify-git-json.sock'
   };
   this.profile = { };
@@ -183,7 +185,7 @@ describe("restify-git-json server", function ( ) {
     before(function ( ) {
       this.mediate = server.events;
     });
-    console.log("USER API SERVER", server);
+    console.log("USER API SERVER", this.mediate);
     it('should be there', function ( ) {
       (server || this.mediate).should.be.ok;
     });
