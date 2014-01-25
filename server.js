@@ -37,9 +37,7 @@ if (!module.parent) {
 
   var server = createServer(env);
   server.listen(port, function( ) {
-    server.log.warn('warn test logger');
-    server.log.debug('debug test logger');
-    server.log.info('info test logger');
+    server.log.info('listening on', server.name, server.url, server.urlize( ).toString( ));
     console.log('listening on', server.name, server.url, server.urlize( ).toString( ));
   });
   server.on('after', restify.auditLogger({
