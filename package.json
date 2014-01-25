@@ -35,7 +35,8 @@
     "git-fs-db": "~0.2.0",
     "event-stream": "~3.0.20",
     "formidable": "~1.0.14",
-    "git-pkt-line": "~0.1.0"
+    "git-pkt-line": "~0.1.0",
+    "nurlize": "~0.1.5"
   },
   "devDependencies": {
     "should": "~3.0.1",

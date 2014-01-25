@@ -151,12 +151,15 @@ describe("restify-git-json server", function ( ) {
   , socketPath: '/tmp/test-restify-git-json.sock'
   };
   this.profile = { };
+  before(function ( ) {
+    server = Server(opts);
+    this.server = server;
+  });
   after(function (done) {
     server.close( );
     done( );
   });
   it('should initialize ok', function (done) {
-    server = Server(opts);
     server.listen(opts.socketPath, function ( ) {
       client = createClient(opts);
       client.status(function (err, req, res, body) {
@@ -177,6 +180,13 @@ describe("restify-git-json server", function ( ) {
   describe("users api", function ( ) {
     var my = { };
     this.profile = my;
+    before(function ( ) {
+      this.mediate = server.events;
+    });
+    console.log("USER API SERVER", server);
+    it('should be there', function ( ) {
+      (server || this.mediate).should.be.ok;
+    });
     var foobarUser = { handle: 'fooTestUser'
       , user: { name: 'Foo Test User', email: 'test@tidepool.io' }
     };

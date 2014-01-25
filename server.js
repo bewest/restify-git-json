@@ -33,7 +33,7 @@ var log = bunyan.createLogger({
 });
 
 function createServer(opts) {
-  var server = restify.createServer( );
+  var server = restify.createServer(opts);
 
   // server.pre(restify.pre.pause( ));
   server.pre(restify.pre.sanitizePath( ));
