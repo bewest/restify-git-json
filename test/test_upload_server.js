@@ -55,13 +55,10 @@ function createClient (opts) {
     return client.post(url, update, fn);
   }
   function createUser (name, update, fn) {
-    var params = '?name=' + update.handle;
-               + '&email=' + update.email;
-    var url = '/users/' + name + '/create' + params;
+    var url = '/users/' + name + '/create';// + params;
     return client.post(url, update, fn);
   }
   function download (url, fn) {
-    // console.log("DOWNLOADING", url);
     url = url.replace('http://localhost', '');
     url = url.replace('http:/localhost', '');
     // console.log("URL", url);
@@ -468,11 +465,14 @@ describe("restify-git-json server", function ( ) {
         var author = { name: "Bar Update", email: "updated@tidepool.io" };
         update.user.user = author;
         update.user.author = author;
+        // update.user.name = "Updated Name";
+        // update.user.email = "updated@email.com";
         update.user.data = { custom: 'property' };
         update.user.user = JSON.parse(JSON.stringify(update.user))
         name = update.name;
         client.updateUser(name, update.user, function (err, req, res, result) {
           // console.log("UPDATED", result);
+          (err === null).should.be.ok;
           result.name.should.equal(name);
           result.user.name.should.equal(update.user.name)
           result.user.data.should.be.ok;
@@ -484,15 +484,9 @@ describe("restify-git-json server", function ( ) {
     }
 
     function testUploadContent (profile, fn) {
-    // describe("uploaded content", function ( ) {
-        // console.log("YYYY");
-        // it('user should be able to upload content into git', function ( ) {
         client.uploadContent(profile, 'test', function (err, results) {
-          // console.log("UPLOADED", results);
           fn(err, results);
         });
-        //});
-    // });
     }
 
     it('should 404 non-existent users', function (done) {
