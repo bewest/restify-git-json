@@ -1,53 +1,24 @@
-Basics are nifty enough for experimentation.
 
-v0.0.5 / 2014-01-24
+v0.0.6 / 2014-01-25
 ==================
 
- * tweak error handling
- * skip both
- * guess again
- * just guessing really
- * try not doing that one?
- * fail earlier then
- * fix issue preventing previous fix
- * use Makefile for test (slightly less noise)
- * fix bug in tests
- * still works on my machine...
- * works on my machine is not acceptable
- * attempt to fix issue only seen in travis so far
- * WIP, improve test coverage, work kinks in test flow control
- * poke travis
- * increase test coverage by adding list of urls to fetch
- * test fetching links
- * bump up test coverage a tiny bit
- * final wording tweak in error message
- * try to not fail while reporting coverage
- * include forgotten dependency
- * tweak to get tests to pass
- * Adjust patterns for blanket?
- * add badges
- * hack multiple cleans
- * explicitly clean between runs
- * add tests
- * test upload and download
- * WIP tests: stuck on upload testing
- * make clean test
- * cover ~89% of user api stuff
- * simplify update name test
- * quick test of users api
- * test most of events
- * eliminate crufty default-fetch
- * clean up/re-organize user helpers
- * record WIP, moving helpers around
- * make update/create/fetch user work more reliably
- * remove dead code
- * record WIP: server.fetchUser, server.updateUser
- * remove dead code
- * add api section for re-usable bits, refactor users
- * remove log line
- * clean up
- * enable user updates
- * remove TODO's from README
- * update readme with profile creation demo
- * remove dead code
- * audit and clean code
+Variety of fixes and tweaks.
+Managed to revisit url generation.
+The server will detect the header `hakken-service` and generate
+hakken:// urls in the responses.
+Urls now use nurlize to generate urls.
+
+Logs are much cleaner and now use some kind of logging system (based
+on bunyan), instead of console.log.
+
+ * remove console clutter from test output
+ * Add homepage and tweak git-fs-db version
+ * fix mkir/mkdir typo
+ * switch to using a log system
+ * WIP this is how logging will look mostly
+ * prepare logging a bit better
+ * remove dead urlize code
+ * update git-fs-db dependency version
+ * try to debug travis failure better
+ * add test/git/refs back into test
+ * introduce nurlize, tweak tests

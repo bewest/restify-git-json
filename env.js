@@ -7,6 +7,8 @@ module.exports = (function ( ) {
     , type: (process.env.GIT_BACKEND || 'fs-db')
       // base directory to host bare repos in
     , base: (process.env.BASE || './out')
+    , log_level: process.env.LOG_LEVEL || 'info'
+    , log_stream: process.env.LOG_STREAM || process.stderr
   };
   if (process.env.SERVER_KEY && process.env.SERVER_CERTIFICATE) {
     config.key = process.env.SERVER_KEY;

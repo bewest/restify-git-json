@@ -1,8 +1,9 @@
 {
   "name": "restify-git-json",
-  "version": "0.0.5",
+  "version": "0.0.6",
   "description": "Restful interface to a git repo",
   "main": "index.js",
+  "homepage": "http://github.com/tidepool-org/restify-git-json",
   "scripts": {
     "test": "make test"
   },
@@ -32,10 +33,11 @@
     "bunyan": "~0.22.1",
     "git-node": "~0.1.1",
     "git-node-platform": "~0.1.4",
-    "git-fs-db": "~0.2.0",
+    "git-fs-db": "~0.3.x",
     "event-stream": "~3.0.20",
     "formidable": "~1.0.14",
-    "git-pkt-line": "~0.1.0"
+    "git-pkt-line": "~0.1.0",
+    "nurlize": "~0.1.5"
   },
   "devDependencies": {
     "should": "~3.0.1",

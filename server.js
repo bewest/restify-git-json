@@ -6,36 +6,16 @@ var restify = require('restify')
   ;
 
 var install = require('./lib/install');
-
-// In true UNIX fashion, debug messages go to stderr, and audit records go
-// to stdout, so you can split them as you like in the shell
-var log = bunyan.createLogger({
-        name: 'server',
-        streams: [ {
-                level: (process.env.LOG_LEVEL || 'info'),
-                stream: process.stderr
-        }, {
-                // This ensures that if we get a WARN or above all debug records
-                // related to that request are spewed to stderr - makes it nice
-                // filter out debug messages in prod, but still dump on user
-                // errors so you can debug problems
-                level: 'warn',
-                type: 'raw',
-                stream: new restify.bunyan.RequestCaptureStream({
-                        level: bunyan.WARN,
-                        maxRecords: 100,
-                        maxRequestIds: 1000,
-                        stream: process.stderr
-                })
-
-        } ],
-        serializers: restify.bunyan.serializers
-});
+var logger = require('./lib/api/logger');
 
 function createServer(opts) {
-  var server = restify.createServer( );
+  if (!opts.log) {
+    opts.log = logger(opts);
+  }
+  var server = restify.createServer(opts);
 
   // server.pre(restify.pre.pause( ));
+  server.log.info('info test logger', 'foo', 'bar');
   server.pre(restify.pre.sanitizePath( ));
   server.pre(restify.pre.userAgentConnection( ));
   server.pre(restify.requestLogger( ));
@@ -57,14 +37,15 @@ if (!module.parent) {
 
   var server = createServer(env);
   server.listen(port, function( ) {
-    console.log('listening on', server.name, server.url);
+    server.log.info('listening on', server.name, server.url, server.urlize( ).toString( ));
+    console.log('listening on', server.name, server.url, server.urlize( ).toString( ));
   });
   server.on('after', restify.auditLogger({
     body: true,
     log: bunyan.createLogger({
-      level: 'info',
-      name: 'audit',
-      stream: process.stdout
+      level: env.log_level || 'info',
+      name: env.service || 'audit',
+      stream: env.log_stream || process.stderr
     })
   }));
 }

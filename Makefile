@@ -7,7 +7,7 @@ clean:
 	rm -Rf out/foobar/
 	rm -Rf out/testUser/
 	rm -Rf out/fooTestUser/
-	mkdir -p out/fooTestUser/
+	#mkdir -p out/fooTestUser/
 	rm -f /tmp/test-restify-git-json.sock
 
 travis-cov: clean
@@ -28,7 +28,10 @@ precover: clean
 	make clean
 	./node_modules/.bin/mocha ${BLANKET} ${SHOULD} -R html-cov test/*.js | w3m -T text/html
 
-test: clean
+logs:
+	mkdir logs
+
+test: clean logs
 	make clean
 	mocha --verbose --require should -R tap test/*.js
 

@@ -61,12 +61,12 @@ function createClient (opts) {
     return client.post(url, update, fn);
   }
   function download (url, fn) {
-    console.log("DOWNLOADING", url);
+    // console.log("DOWNLOADING", url);
     url = url.replace('http://localhost', '');
     url = url.replace('http:/localhost', '');
-    console.log("URL", url);
+    // console.log("URL", url);
     client.get(url, function (err, res, req, body) {
-      console.log("DOWNLOADING", url, body);
+      // console.log("DOWNLOADING", url, body);
       fn(err, body);
     });
   }
@@ -148,15 +148,20 @@ describe("restify-git-json server", function ( ) {
   var server, client;
   var opts = {
     base: './out'
+  , log_stream: 'rotating-file'
+  , log_path: './logs/test.log'
   , socketPath: '/tmp/test-restify-git-json.sock'
   };
   this.profile = { };
+  before(function ( ) {
+    server = Server(opts);
+    this.server = server;
+  });
   after(function (done) {
     server.close( );
     done( );
   });
   it('should initialize ok', function (done) {
-    server = Server(opts);
     server.listen(opts.socketPath, function ( ) {
       client = createClient(opts);
       client.status(function (err, req, res, body) {
@@ -177,6 +182,13 @@ describe("restify-git-json server", function ( ) {
   describe("users api", function ( ) {
     var my = { };
     this.profile = my;
+    before(function ( ) {
+      this.mediate = server.events;
+    });
+    // console.log("USER API SERVER", this.mediate);
+    it('should be there', function ( ) {
+      (server || this.mediate).should.be.ok;
+    });
     var foobarUser = { handle: 'fooTestUser'
       , user: { name: 'Foo Test User', email: 'test@tidepool.io' }
     };
@@ -207,13 +219,13 @@ describe("restify-git-json server", function ( ) {
         body.user.name.should.be.ok;
         my.profile = body;
         this.profile = body;
-        console.log('validFetchUser', this.profile);
+        // console.log('validFetchUser', this.profile);
         fn(err, body);
       });
     }
 
     it('should then update', function (done) {
-      console.log('should then update');
+      // console.log('should then update');
       testUpdateUser(finish);
       function finish (err, result) { done( ); }
     });
@@ -224,15 +236,15 @@ describe("restify-git-json server", function ( ) {
     it('should then upload', function (done) {
       this.timeout(12000);
       my.profile.handle.should.be.ok;
-      console.log("UPLOADING to", my.profile);
+      // console.log("UPLOADING to", my.profile);
       testUploadContent(my.profile, finish);
       function finish (err, result) {
-        console.log("DONE DONE", result);
-        console.log("DONE ERR", err);
+        // console.log("DONE DONE", result);
+        // console.log("DONE ERR", err);
         result.body.should.exist;
         result.body.ref.should.exist;
         result.body.content.should.exist;
-        console.log("DONE OK", result.body.head.tree);
+        // console.log("DONE OK", result.body.head.tree);
         my.upload = result;
         done( );
       }
@@ -241,7 +253,7 @@ describe("restify-git-json server", function ( ) {
 
     it('should then download content', function (done) {
         this.timeout(4000);
-        console.log("DOWNLOAD", my.upload);
+        // console.log("DOWNLOAD", my.upload);
         my.upload.should.be.ok;
         downloadContent(my.upload, function (err, results) {
           done( );
@@ -253,13 +265,13 @@ describe("restify-git-json server", function ( ) {
     it('should dereference urls', function (done) {
       this.timeout(10000);
       var downloads;
-      console.log("DEREFERENCE", my.upload);
+      // console.log("DEREFERENCE", my.upload);
       my.upload.should.be.ok;
       var urls = [ my.upload.body.url, my.upload.body.head.url ];
       downloads = walkDownload(more, finish);
       // downloads.resume( );
       // urls.forEach(downloads.write);
-      // urls.push(['/repos', my.profile.handle, 'test/git/refs'].join('/'));
+      urls.push(['/repos', my.profile.handle, 'test/git/refs'].join('/'));
       // urls.push(['/repos', my.profile.handle, 'test/git/refs/'].join('/'));
       urls.push(['/repos', my.profile.handle, 'test'].join('/'));
       urls.push(['/repos', my.profile.handle].join('/'));
@@ -281,7 +293,7 @@ describe("restify-git-json server", function ( ) {
         return u;
       }
       function more (err, results) {
-        console.log("MORE", err, results);
+        // console.log("MORE", err, results);
         var add = [ ];
         function validQ (u) {
           if (Q(u)) {
@@ -299,12 +311,12 @@ describe("restify-git-json server", function ( ) {
           }
           var body;
           if (results.result.type == 'tree') {
-            console.log('FOUND TREE', results);
+            // console.log('FOUND TREE', results);
             body = result.result;
           }
           if (results.result.body) {
             body = results.result.body;
-            console.log('MORE BODY TYPE, url', body.type, body.url);
+            // console.log('MORE BODY TYPE, url', body.type, body.url);
             if (body.type == 'commit') {
               validQ(body.url);
               return add;
@@ -320,7 +332,7 @@ describe("restify-git-json server", function ( ) {
             }
           }
           if (body) {
-            console.log("MORE FOUND", body);
+            // console.log("MORE FOUND", body);
             if (typeof body == "Array") {
               body.forEach(validate);
             } else {
@@ -330,7 +342,7 @@ describe("restify-git-json server", function ( ) {
               var keys = Object.keys(body);
               keys.forEach(function (i, k) {
                 if (body[i].url) {
-                  console.log("MORE URLS", body[i].url);
+                  // console.log("MORE URLS", body[i].url);
                   // downloads.write(body[i].url);
                   validQ(body[i].url);
                   // add.push(body[i].url);
@@ -379,11 +391,11 @@ describe("restify-git-json server", function ( ) {
       }
       var finished = false;
       function crawl (err, result, next) {
-        console.log("CRAWL CRAWL", result);
+        // console.log("CRAWL CRAWL", result);
         if (visit) {
           var add = visit(err, result);
           var U = result.url;
-          console.log("CRAWL ADD", add);
+          // console.log("CRAWL ADD", add);
           if (add && add.length > 0) {
             stream.pause( );
             function valid (url, pass) {
@@ -392,7 +404,7 @@ describe("restify-git-json server", function ( ) {
               pass(null, url);
             }
             var load = walkDownload(visit, function (e, rs) {
-              console.log("CRAWL DEEP", add, e, rs);
+              // console.log("CRAWL DEEP", add, e, rs);
               found[U] = found[U] || {};
               result.deep = rs;
               found[U].deep = (e || rs);
@@ -415,7 +427,7 @@ describe("restify-git-json server", function ( ) {
                     // es.readArray(urls),
       var stream = es.pipeline(tr, es.map(down), es.writeArray(done))
       function done(err, results) {
-        console.log("DOWNLOADING CRAWL DONE", err, results);
+        // console.log("DOWNLOADING CRAWL DONE", err, results);
         fn(err, results);
       }
       return tr;
@@ -423,7 +435,7 @@ describe("restify-git-json server", function ( ) {
 
     function downloadContent (download, fn) {
 
-      console.log("DOWNLAODCONTENT", download);
+      // console.log("DOWNLAODCONTENT", download);
       download.body.should.be.ok;
       es.pipeline(es.readArray(download.body.content)
         , es.map(fetch)
@@ -431,10 +443,10 @@ describe("restify-git-json server", function ( ) {
         );
 
       function fetch (url, next) {
-        console.log("FETCH URL", url); 
+        // console.log("FETCH URL", url); 
         url = url.replace("http:/localhost", "");
         url = url.replace("http://localhost", "");
-        console.log("FETCH URL", url); 
+        // console.log("FETCH URL", url); 
         client.get(url, function (err, req, res, body) {
           // console.log("FETCH FETCH", arguments);
           res.body.should.be.ok;
@@ -449,9 +461,9 @@ describe("restify-git-json server", function ( ) {
     }
 
     function testUpdateUser (finish) {
-      console.log("XXXXX");
+      // console.log("XXXXX");
       // it('should update user', function (done) {
-        console.log("PROFILE FOR UPDATE", my.profile, this.profile);
+        // console.log("PROFILE FOR UPDATE", my.profile, this.profile);
         var update = JSON.parse(JSON.stringify(my.profile));
         var author = { name: "Bar Update", email: "updated@tidepool.io" };
         update.user.user = author;
@@ -473,10 +485,10 @@ describe("restify-git-json server", function ( ) {
 
     function testUploadContent (profile, fn) {
     // describe("uploaded content", function ( ) {
-        console.log("YYYY");
+        // console.log("YYYY");
         // it('user should be able to upload content into git', function ( ) {
         client.uploadContent(profile, 'test', function (err, results) {
-          console.log("UPLOADED", results);
+          // console.log("UPLOADED", results);
           fn(err, results);
         });
         //});
@@ -512,7 +524,7 @@ function testCreateUser (client, update, fn) {
   var R = { };
   function finish (err, result) {
     if (--left == 0) {
-      console.log('LEFT', left, R);
+      // console.log('LEFT', left, R);
       fn(R.err, R.result);
     }
   }
@@ -520,7 +532,7 @@ function testCreateUser (client, update, fn) {
     // it('should create a user', function (done) {
       var name = update.handle;
       client.createUser(name, update, function (err, req, res, result) {
-        console.log('CREATED', result);
+        // console.log('CREATED', result);
         result.handle.should.equal(name);
         result.user.name.should.equal(update.user.name);
         result.user.email.should.equal(update.user.email);
@@ -538,7 +550,7 @@ function testCreateUser (client, update, fn) {
     it('should not allow repeated user creation', function (done) {
       var name = my.profile.handle;
       client.createUser(name, update, function (err, req, res, result) {
-        console.log('REFUSAL', result);
+        // console.log('REFUSAL', result);
         err.statusCode.should.equal(405);
         result.old.should.be.ok;
         // fn(err, result);
