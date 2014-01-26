@@ -58,7 +58,7 @@ describe('users api', function ( ) {
         , message: 'my update'};
     server.updateUser(name, updates, commit, proof);
     function proof (profile) {
-      console.log('updated profile', profile);
+      // console.log('updated profile', profile);
       profile.user.should.be.ok;
       profile.user.name.should.equal(change.name);
       done( );

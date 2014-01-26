@@ -27,14 +27,14 @@ describe("events module interface", function ( ) {
   var ev = events( );
   it("should respond to events with listeners", function (done) {
     ev.on('user', function (hook, next) {
-      console.log('every user request 2', hook.value( ));
+      // console.log('every user request 2', hook.value( ));
       hook.should.be.ok;
       hook.map.call.should.be.ok;
       hook.map(function (data, N) {
         data.should.be.ok;
         data.name.should.be.ok;
         data.args.should.be.empty;
-        console.log(data);
+        // console.log(data);
         data.profile = 'http://logins/' + data.name.toLowerCase( );
         N(null, data);
       });
