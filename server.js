@@ -1,6 +1,4 @@
 
-var path = require('path');
-
 var restify = require('restify')
   , bunyan = require('bunyan')
   ;
@@ -11,6 +9,9 @@ var logger = require('./lib/api/logger');
 function createServer(opts) {
   if (!opts.log) {
     opts.log = logger(opts);
+  }
+  if (opts.certificate) {
+    opts = require('./lib/ssl')(opts);
   }
   var server = restify.createServer(opts);
 
