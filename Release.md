@@ -1,8 +1,7 @@
 
-v0.0.7 / 2014-01-25
+v0.0.8 / 2014-01-27
 ==================
 
-Needed to make sandcastle run.
-
- * tweak logging a bit to allow instances to run
- * Merge pull request #4 from bewest/release/v0.0.6
+ * fix ssl config: key "cert"
+ * add release tool
+ * clean up some test comments
