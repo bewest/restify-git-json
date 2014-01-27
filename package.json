@@ -1,6 +1,6 @@
 {
   "name": "restify-git-json",
-  "version": "0.0.7",
+  "version": "0.0.8",
   "description": "Restful interface to a git repo",
   "main": "index.js",
   "homepage": "http://github.com/tidepool-org/restify-git-json",
