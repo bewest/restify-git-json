@@ -1,6 +1,5 @@
 
-v0.0.9 / 2014-01-27
+v0.0.10 / 2014-02-16
 ==================
 
- * fix ssl handling
-   Actually test with self signed cert.
+ * make safe for binary data
